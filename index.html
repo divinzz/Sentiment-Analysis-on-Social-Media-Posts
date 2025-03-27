@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc; /* Soft grayish background */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 20px;
+            color: #343030; /* Soft blue for heading */
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            background-color: #fafafa;
+            color: #333;
+            resize: vertical;
+            outline: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        textarea:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+        }
+
+        button {
+            background-color: #4a90e2; /* Soft blue button */
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #357ab7; /* Slightly darker blue */
+            transform: translateY(-5px);
+        }
+
+        .loading {
+            font-size: 1rem;
+            color: #4a90e2;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 1.4rem;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        .positive {
+            color: #28a745;
+            background-color: #d4edda;
+        }
+
+        .negative {
+            color: #e74c3c;
+            background-color: #f8d7da;
+        }
+
+        .confidence {
+            font-size: 1rem;
+            color: #666;
+            font-weight: 300;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            button {
+                font-size: 1rem;
+                padding: 12px 24px;
+            }
+
+            textarea {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Sentiment Analysis</h1>
+    <h2>Discover the Sentiment of Social Media Post </h2>
+
+    <form id="sentimentForm" action="/predict" method="POST">
+        <textarea name="user_input" rows="5" placeholder="Enter your thoughts..." required>{{ request.form['user_input'] if request.method == 'POST' else '' }}</textarea>
+        <button type="submit">Analyze Sentiment</button>
+    </form>
+
+    <div class="loading" id="loading">Analyzing...</div>
+
+    {% if prediction %}
+    <div class="result {{ 'positive' if 'Positive' in prediction else 'negative' }}">
+        <p>{{ prediction }}</p>
+        <p class="confidence">Confidence: {{ confidence | round(2) }}%</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    const form = document.getElementById('sentimentForm');
+    const loadingElement = document.getElementById('loading');
+
+    form.addEventListener('submit', function (event) {
+        loadingElement.style.display = 'block'; 
+    });
+</script>
+
+</body>
+</html>
